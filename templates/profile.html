@@ -1,0 +1,24 @@
+<!--Code extracted and adaprted from:https://github.com/PrettyPrinted/youtube_video_code/blob/master/2020/02/10/Creating%20a%20Login%20Page%20in%20Flask%20Using%20Sessions/flask_session_example/templates/login.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+  <body>
+    <section class="hero is-success is-fullheight">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            {{g.user.username}}'s Profile <!--Adding the user name here using g-->
+          </h1>
+          <h2 class="subtitle">
+            You are user number #{{g.user.id}}
+          </h2>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
