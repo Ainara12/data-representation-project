@@ -28,6 +28,9 @@ Furthermore I have also included a test file "inservaluesintable" to make sure t
 3. File dbconfig.py: Added to add my credentials to acces to database although it does nto work for me on my environment/ device. 
 4. Gitignore file
 5. Folder static pages: Added the folder to add the file "index.hmtl" and mimic the structure that the app had on my system. 
+6. Templates folder: Inside this folder added "login" and "profile" pages which are used to define user sessions and allow them to login and access to profile. 
+7. Loginserver.py using this server you can login as user in the database through the html files contained in the "Templates" folder above described. Once you run this server you will be able to also access to the list of users and use the list of credentials to access to the backend. 
+
 
 # 4. Instructions to run code: 
 
@@ -36,3 +39,5 @@ This is a pretty simple code, just need to connect to server3.py and access to s
 # 5. References: 
 
 -Andrew Beatty Lecturers: add link to GMIT
+-Login server section code was extracted and adapted from this tutorial: https://www.youtube.com/watch?v=2Zz97NVbH0U 
+
