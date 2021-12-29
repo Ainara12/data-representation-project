@@ -1,0 +1,276 @@
+
+<html>
+    <head>
+        <title> view our Subscribers!</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+       
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+    <h1>Our subscribers!</h1>
+    <!--Creating form-->
+        <div id="create-update" style="display:none">
+            <h3>Create/edit data</h3>
+                <table id="createUpdateForm">
+                    <tr>
+                        <td>id</td>
+                        <td><input type= "text" name= "id" id="idInput"></td>
+                    </tr>
+                    <tr>
+                        <td>Name</td>
+                        <td><input type= "text" name= "Name"></td>
+                    </tr>
+                    <tr>
+                        <td>Paid</td>
+                        <td><input type= "currency" name= "Paid"></td>
+                    </tr>
+                    <tr>
+                        <td>Membership</td>
+                        <td><input type= "text" name= "Membership"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button id="create-button" onclick="doCreate()">Create</button>
+                            <button id="update-button" onclick="doUpdate()">update</button>
+
+                        </td>
+                       
+                    </tr>
+                
+                
+                </table>
+        </div>
+        <div id= "display">
+            <h2>Subscribers details</h2>
+            <button onclick="showCreate()">Create</button>
+            <table id="subTable" class="table">
+                <tr>
+
+                    <th>id</th> <th>Name</th><th>Paid</th><th>Membership</th>
+
+                </tr>
+                
+            </table>
+        </div>
+
+     
+    </body>
+
+
+    <script>
+        function showCreate(){//Creating this function to find div with id "display" and hide it
+            document.getElementById('display').style.display="none"
+            document.getElementById('update-button').style.display="none"
+            document.getElementById('create-button').style.display="block"
+            document.getElementById('create-update').style.display="block"
+        
+
+        }
+        function populateForm(subscriber){
+            var form = document.getElementById("createUpdateForm")
+            var subscriber = {}
+
+            form.querySelector('input[name="id"]').value=subscriber.id
+            form.querySelector('input[name="id"]').disabled=true //disabling id so it cannot me modified since is PK 
+            form.querySelector('input[name="Name"]').value=subscriber.Name
+            form.querySelector('input[name="Paid"]').value=subscriber.Paid
+            form.querySelector('input[name="Membership"]').value=subscriber.Membership
+
+        }
+        function showUpdate(buttonElement){
+        document.getElementById('create-button').style.display="none"
+        document.getElementById('subTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+
+        document.getElementById('create-update').style.display="none"
+        document.getElementById('create-update').style.display="inline"
+
+        document.getElementById('create-button').style.display="none"
+        document.getElementById('update-button').style.display="block"
+
+
+        var rowElement = buttonElement.parentNode.parentNode
+        // these is a way of finding the closest <tr> which would safer, closest()
+        
+        var subscriber = getSubFromRow(rowElement)
+        populateFormWithSub(subscriber)
+    }
+        function doCreate(){
+        // console.log("in doCreate")
+        subscriber=getSubFromForm()
+        //Creating ajax call 
+        console.log(subscriber)
+        $.ajax({
+            url: "/subscribers",
+            method:"POST",
+            data:JSON.stringify(subscriber),
+            dataType: "JSON",
+            contentType: "application/json; charset=utf-8",
+            success:function(result){
+                console.log(result)
+                addSubToTable(subscriber)
+                showDisplay()
+                clearForm()
+
+                },
+                error: function(xhr,status,error){
+                console.log("error"+error)
+                }
+            })
+        }
+        function doUpdate(){
+            var subscriber = getSubFromForm();
+            var rowElement = document.getElementById(subscriber.id);
+            updateSubAjax(subscriber);
+            setSubInRow(rowElement,subscriber);
+       
+            clearForm();//function to clear form once used
+            showViewAll();
+        }
+        function updateSubAjax(subscriber){
+        //console.log(JSON.stringify(subscriber));
+            $.ajax({
+            url: "http://127.0.0.1:5000/subscribers/"+encodeURI(subscriber.id),
+            method:"PUT",
+            data:JSON.stringify(subscriber),
+            dataType: "JSON",
+            contentType: "application/json; charset=utf-8",
+            success:function(result){
+               // console.log(result);
+                  
+            },
+            error:function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+        }
+        function doDelete(r){
+            var tableElement = document.getElementById('subTable');
+            var rowElement = r.parentNode.parentNode;
+            var index = rowElement.rowIndex;
+            deleteSubAjax(rowElement.getAttribute("id"));
+            tableElement.deleteRow(index);
+        }
+        function deleteSubAjax(id){
+        //console.log(JSON.stringify('deleting '+id));
+            $.ajax({
+                url: "http://127.0.0.1:5000/subscribers/"+encodeURI(id),
+                method:"DELETE",
+                data:"",
+                dataType: "JSON",
+                contentType: "application/json; charset=utf-8",
+                success:function(result){
+                //console.log(result);
+                  
+                },
+                error:function(xhr,status,error){
+                    console.log("error: "+status+" msg:"+error);
+                }
+            });
+        }
+            //adding function to update table row as shown in the update function in lecturer's (week 10)
+        function updateTableRow(subscriber){
+            rowElement=document.getElementById(subscriber.id)
+            rowElement.cells[1].firstChild.textContent=subscriber.Name
+            rowElement.cells[2].firstChild.textContent=subscriber.Paid
+            rowElement.cells[3].firstChild.textContent=subscriber.Membership
+            //console.log("updating table")
+        }
+        function getSubFromForm(){
+            var form = document.getElementById("createUpdateForm")
+            var subscriber={}
+
+            subscriber.id= form.querySelector('input[name="id"]').value
+            subscriber.Name= form.querySelector('input[name="Name"]').value
+            subscriber.Paid= form.querySelector('input[name="Paid"]').value
+            subscriber.Membership= form.querySelector('input[name="Membership"]').value
+
+            return subscriber
+        }
+        function setSubInRow(rowElement,subscriber){
+        rowElement.cells[0].firstChild.textContent= subscriber.id  
+        rowElement.cells[1].firstChild.textContent= subscriber.Name
+        rowElement.cells[2].firstChild.textContent= subscriber.Paid
+        rowElement.cells[3].firstChild.textContent= subscriber.Membership
+    }
+        function showDisplay(){
+            document.getElementById('display').style.display="block"
+            document.getElementById('create-update').style.display="none"
+
+
+
+        }
+        function populateTable(){
+            //ajax call to get all. 
+            $.ajax({
+                url: 'http://127.0.0.1:5000/subscribers',
+                method:'GET',
+                dataType:'JSON',
+                success:function(result){
+                    console.log(result);
+                    for (subscriber of result){
+                    addSubToTable(subscriber);
+                    }
+                },
+                error:function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+                }
+            })
+        }
+        function addSubToTable(subscriber){
+            tableElement = document.getElementById("subTable")
+            rowElement = tableElement.insertRow(-1)
+            rowElement.setAttribute("id",subscriber.id)
+            cell1 = rowElement.insertCell(0)
+            cell1.innerHTML = subscriber.id
+            var cell2 = rowElement.insertCell(1)
+            cell2.innerHTML = subscriber.Name
+            var cell3 = rowElement.insertCell(2)
+            cell3.innerHTML = subscriber.Paid
+            var cell4 = rowElement.insertCell(3)
+            cell4.innerHTML = subscriber.Membership
+            var cell5 = rowElement.insertCell(4)
+            cell5.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+            var cell6 = rowElement.insertCell(5)
+            cell6.innerHTML = '<button onclick=doDelete(this)>Delete</button>'
+        }
+        populateTable()
+        function clearForm(){//create function to clear form once we are finish  so the data entered previously does not stay in the fields
+            var form = document.getElementById('createUpdateForm')
+        
+
+            form.querySelector('input[name="id"]').value=''
+            form.querySelector('input[name="id"]').disabled=false
+
+            form.querySelector('input[name="Name"]').value=''
+            form.querySelector('input[name="Paid"]').value=''
+            form.querySelector('input[name="Membership"]').value=''
+        }
+        function getSubFromRow(rowElement){
+            var subscriber ={}
+            subscriber.id  = rowElement.getAttribute('id')
+            subscriber.Name = rowElement.cells[1].firstChild.textContent
+            subscriber.Paid = rowElement.cells[2].firstChild.textContent
+            subscriber.Membership = parseInt(rowElement.cells[3].firstChild.textContent,10)
+            return subscriber
+        }
+        function setSubInRow(rowElement,subscriber){
+            rowElement.cells[0].firstChild.textContent= subscriber.id  
+            rowElement.cells[1].firstChild.textContent= subscriber.Name
+            rowElement.cells[2].firstChild.textContent= subscriber.Paid
+            rowElement.cells[3].firstChild.textContent= subscriber.Membership
+        }
+        function populateFormWithSub(subscriber){
+            var form = document.getElementById('createUpdateForm')
+            form.querySelector('input[name="id"]').disabled = true//disabled id so we cnanot modify as it is automatic (primary KEY)
+
+            form.querySelector('input[name="id"]').value  = subscriber.id
+            form.querySelector('input[name="Name"]').value= subscriber.Name
+            form.querySelector('input[name="Paid"]').value= subscriber.Paid
+            form.querySelector('input[name="Membership"]').value= subscriber.Membership
+            return subscriber
+        }
+  
+    
+    </script>
+</html>
