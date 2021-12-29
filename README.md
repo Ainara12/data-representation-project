@@ -38,6 +38,6 @@ This is a pretty simple code, just need to connect to server3.py and access to s
 
 # 5. References: 
 
--Andrew Beatty Lecturers: add link to GMIT
--Login server section code was extracted and adapted from this tutorial: https://www.youtube.com/watch?v=2Zz97NVbH0U 
+1. Andrew Beatty Lecturers:https://web.microsoftstream.com/video/e1df6ccc-60f2-4ed8-9daa-13fe6f39bf2d?list=studio 
+2. Login server section code was extracted and adapted from this tutorial: https://www.youtube.com/watch?v=2Zz97NVbH0U 
 
