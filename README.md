@@ -31,6 +31,7 @@ Furthermore I have also included a test file "inservaluesintable" to make sure t
 6. Templates folder: Inside this folder added "login" and "profile" pages which are used to define user sessions and allow them to login and access to profile. 
 7. Loginserver.py using this server you can login as user in the database through the html files contained in the "Templates" folder above described. Once you run this server you will be able to also access to the list of users and use the list of credentials to access to the backend. 
 8. Added CSV file containing the "subscribers table" entries from my database. 
+9. Requirements.txt file.
 
 
 # 4. Instructions to run code: 
